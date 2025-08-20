@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LuxAudio — Магазин наушников</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f8fafc;
+      color: #222;
+    }
+    header {
+      background: #111;
+      color: #fff;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+    .cart-btn {
+      background: #fff;
+      color: #111;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .hero {
+      padding: 50px 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: #fff;
+    }
+    .hero h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    .catalog {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      padding: 30px 20px;
+    }
+    .product {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+    }
+    .product img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .product .info {
+      padding: 15px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .product h3 {
+      margin: 0 0 5px;
+      font-size: 18px;
+    }
+    .product p {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: #555;
+    }
+    .price {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .add-btn {
+      background: #111;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .add-btn:hover {
+      background: #333;
+    }
+    footer {
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+    }
+    /* Корзина */
+    #cart {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      width: 300px;
+      height: 100%;
+      background: #fff;
+      box-shadow: -2px 0 10px rgba(0,0,0,0.2);
+      padding: 20px;
+      transition: 0.3s;
+      overflow-y: auto;
+      z-index: 20;
+    }
+    #cart.active {
+      right: 0;
+    }
+    #cart h2 {
+      margin-top: 0;
+    }
+    .cart-item {
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+    .cart-total {
+      font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>LuxAudio</h1>
+  <div class="cart-btn" onclick="toggleCart()">🛒 Корзина (<span id="cart-count">0</span>)</div>
+</header>
+
+<section class="hero">
+  <h2>Лучшие наушники для тебя 🎧</h2>
+  <p>Качественный звук, гарантия и доставка по всему Казахстану.</p>
+</section>
+
+<section class="catalog">
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1585386959984-a41552231658?q=80&w=600" alt="">
+    <div class="info">
+      <h3>Wireless Pro</h3>
+      <p>До 24 ч работы</p>
+      <div class="price">69 990 ₸</div>
+      <button class="add-btn" onclick="addToCart('Wireless Pro', 69990)">В корзину</button>
+    </div>
+  </div>
+
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1518449037367-8d1f4f7f1fd5?q=80&w=600" alt="">
+    <div class="info">
+      <h3>Studio Max</h3>
+      <p>Hi-Res звук, ANC</p>
+      <div class="price">199 990 ₸</div>
+      <button class="add-btn" onclick="addToCart('Studio Max', 199990)">В корзину</button>
+    </div>
+  </div>
+
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80&w=600" alt="">
+    <div class="info">
+      <h3>Lite Buds</h3>
+      <p>Лёгкие и компактные</p>
+      <div class="price">34 990 ₸</div>
+      <button class="add-btn" onclick="addToCart('Lite Buds', 34990)">В корзину</button>
+    </div>
+  </div>
+</section>
+
+<!-- Корзина -->
+<div id="cart">
+  <h2>Корзина</h2>
+  <div id="cart-items"></div>
+  <div class="cart-total">Итого: <span id="cart-total">0</span> ₸</div>
+</div>
+
+<footer>
+  <p>© 2025 LuxAudio. Все права защищены.</p>
+  <p>WhatsApp: +7 700 000 00 00 | Instagram: @luxaudio.kz</p>
+</footer>
+
+<script>
+  let cart = [];
+  const cartCountEl = document.getElementById("cart-count");
+  const cartItemsEl = document.getElementById("cart-items");
+  const cartTotalEl = document.getElementById("cart-total");
+  const cartEl = document.getElementById("cart");
+
+  function addToCart(name, price) {
+    const item = cart.find(p => p.name === name);
+    if (item) {
+      item.qty++;
+    } else {
+      cart.push({ name, price, qty: 1 });
+    }
+    updateCart();
+  }
+
+  function updateCart() {
+    cartCountEl.textContent = cart.reduce((sum, i) => sum + i.qty, 0);
+    cartItemsEl.innerHTML = "";
+    let total = 0;
+    cart.forEach(i => {
+      total += i.price * i.qty;
+      cartItemsEl.innerHTML += `<div class="cart-item">${i.name} × ${i.qty} — ${i.price * i.qty} ₸</div>`;
+    });
+    cartTotalEl.textContent = total;
+  }
+
+  function toggleCart() {
+    cartEl.classList.toggle("active");
+  }
+</script>
+
+</body>
+</html>
